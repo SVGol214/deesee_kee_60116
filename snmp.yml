@@ -1,0 +1,19 @@
+modules:
+  keenetic:
+    walk:
+      - 1.3.6.1.2.1.1.1.0
+      - 1.3.6.1.4.1.2021.10.1.3
+    
+    metrics:
+      - name: sys_descr
+        oid: 1.3.6.1.2.1.1.1.0
+        type: string
+        help: "System description"
+      
+      - name: load_average
+        oid: 1.3.6.1.4.1.2021.10.1.3
+        type: gauge
+        help: "System load average (1, 5, 15 min)"
+        indexes:
+          - labelname: load_index
+            type: integer

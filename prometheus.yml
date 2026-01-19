@@ -1,0 +1,16 @@
+global:
+  scrape_interval: 30s
+  evaluation_interval: 30s
+
+scrape_configs:
+  # Keenetic через Alloy
+  - job_name: 'keenetic'
+    static_configs:
+      - targets: ['alloy:12345']
+    scrape_interval: 30s
+
+  # Prometheus сам себя мониторит
+  - job_name: 'prometheus2'
+    static_configs:
+      - targets: ['prometheus2:9090']
+

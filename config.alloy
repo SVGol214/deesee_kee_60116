@@ -1,0 +1,28 @@
+logging {
+  level = "debug"
+}
+
+prometheus.exporter.snmp "keenetic" {
+  config_file = "/etc/alloy/snmp.yml"
+  
+  target "router" {
+    // Пробуем включить community в строку адреса
+    address = "192.168.1.1:161?community=keenetic_monitor"
+//  module  = "keenetic"
+    module  = "if_mib"    
+  }
+}
+
+prometheus.scrape "keenetic_scraper" {
+  targets    = prometheus.exporter.snmp.keenetic.targets
+  forward_to = [prometheus.remote_write.local_prometheus.receiver]
+  scrape_interval = "30s"
+}
+
+prometheus.remote_write "local_prometheus" {
+  endpoint {
+//  url = "http://localhost:9092/api/v1/write"
+    url = "http://prometheus2:9090/api/v1/write"
+
+  }
+}

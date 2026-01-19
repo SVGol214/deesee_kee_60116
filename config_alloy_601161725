@@ -1,0 +1,37 @@
+//config.alloy
+
+logging {
+  level = "info"
+}
+
+prometheus.exporter.snmp "keenetic" {
+  config_file = "/etc/alloy/snmp.yml"
+  
+  target "router" {
+//  address = "192.168.1.1:161"
+    address = "host.docker.internal:161" // <-- Используем хост Docker
+    module = "keenetic"
+//    community = "keenetic_monitor"
+    auth    = "public_v2" // Указываем имя профиля аутентификации
+  }
+  // Профиль аутентификации SNMP v2c
+  walk_param "public_v2" {
+    config {
+      version = "2c"
+      community = "keenetic_monitor"
+    }
+  }
+}
+
+prometheus.scrape "keenetic_scraper" {
+  targets = prometheus.exporter.snmp.keenetic.targets
+  forward_to = [prometheus.remote_write.local_prometheus.receiver]
+}
+
+prometheus.remote_write "local_prometheus" {
+  endpoint {
+    url = "http://prometheus2:9090/api/v1/write"
+  }
+}
+
+
